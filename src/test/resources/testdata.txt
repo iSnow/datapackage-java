@@ -1,0 +1,5 @@
+The frictionless data project maintains two repositories for example data:
+- https://github.com/frictionlessdata/testsuite-data. This contains test-suite data every implementation should be able to parse
+- https://github.com/frictionlessdata/examples. Real-world examples of datapackages, including zipped versions.
+
+Our test data derives mostly from the testsuite-data, with a couple zip files from examples.

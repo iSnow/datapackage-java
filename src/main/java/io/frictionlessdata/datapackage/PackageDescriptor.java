@@ -28,14 +28,14 @@ import static io.frictionlessdata.datapackage.util.JsonUtils.getJsonStringConten
  * In non-strict mode, validation errors are simply reported and BOM's
  * are silently ignored.
  */
-public class PackageDefinition {
+public class PackageDescriptor {
     private JSONObject jsonObject = new JSONObject();
     private boolean strictValidation = false;
     private List<Resource> resources;
     private List<Exception> errors;
     private Validator validator = new Validator();
 
-    public PackageDefinition(){
+    public PackageDescriptor(){
     }
 
 
@@ -46,7 +46,7 @@ public class PackageDefinition {
      * @throws DataPackageException thrown if the `InputStream` doesn't contain a JSON string
      * @throws ValidationException thrown if the `InputStream` doesn't contain a valid JSON string
      */
-    public PackageDefinition(InputStream inStream, boolean strict) throws IOException, DataPackageException, ValidationException {
+    public PackageDescriptor(InputStream inStream, boolean strict) throws IOException, DataPackageException, ValidationException {
         this.strictValidation = strict;
 
         String content = getJsonStringContentFromInputStream(inStream, this.strictValidation);
@@ -61,7 +61,7 @@ public class PackageDefinition {
      * @throws DataPackageException thrown if the `InputStream` doesn't contain a JSON string
      * @throws ValidationException thrown if the `InputStream` doesn't contain a valid JSON string
      */
-    public PackageDefinition(String jsonStringSource, boolean strict) throws IOException, DataPackageException, ValidationException{
+    public PackageDescriptor(String jsonStringSource, boolean strict) throws IOException, DataPackageException, ValidationException{
         this.strictValidation = strict;
 
         // If String representation of desriptor JSON object is provided.
@@ -77,7 +77,7 @@ public class PackageDefinition {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public PackageDefinition(URL urlSource, boolean strict) throws DataPackageException, ValidationException, IOException, FileNotFoundException{
+    public PackageDescriptor(URL urlSource, boolean strict) throws DataPackageException, ValidationException, IOException, FileNotFoundException{
         this.strictValidation = strict;
 
         // Get string content of given remove file.
@@ -93,7 +93,7 @@ public class PackageDefinition {
      * @throws ValidationException
      * @throws FileNotFoundException
      */
-    public PackageDefinition(Path filePath, boolean strict) throws IOException, DataPackageException, ValidationException, FileNotFoundException {
+    public PackageDescriptor(Path filePath, boolean strict) throws IOException, DataPackageException, ValidationException, FileNotFoundException {
         this.strictValidation = strict;
 
         String content = getJsonStringContentFromInputStream(Files.newInputStream(filePath), this.strictValidation);
@@ -216,7 +216,7 @@ public class PackageDefinition {
 
     /**
      * Takes a String representing JSON content and parses it into a JSON object.
-     * Then validates the content and stores it in the PackageDefinition object.
+     * Then validates the content and stores it in the PackageDescriptor object.
      *
      * @param jsonContent String representation of a JSON object. Can't be null or empty.
      * @throws IOException thrown if JSON parsing fails

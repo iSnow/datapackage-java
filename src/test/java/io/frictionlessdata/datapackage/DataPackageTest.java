@@ -35,11 +35,11 @@ public class DataPackageTest {
         File createdFile = folder.newFile("test_save_datapackage.zip");
         
         // save the datapackage in zip file.
-        PackageDefinition savedPackage = this.getDataPackageFromFilePath(true);
+        PackageDescriptor savedPackage = this.getDataPackageFromFilePath(true);
         savedPackage.saveJson(createdFile.getAbsolutePath());
         
         // Read the datapckage we just saved in the zip file.
-        PackageDefinition readPackage = new PackageDefinition(createdFile.getAbsolutePath(), false);
+        PackageDescriptor readPackage = new PackageDescriptor(createdFile.getAbsolutePath(), false);
         
         // Check if two data packages are have the same key/value pairs.
         // For some reason JSONObject.similar() is not working even though both
@@ -69,12 +69,12 @@ public class DataPackageTest {
     }
 
     
-    private PackageDefinition getDataPackageFromFilePath(boolean strict, String datapackageFilePath) throws DataPackageException, IOException{
+    private PackageDescriptor getDataPackageFromFilePath(boolean strict, String datapackageFilePath) throws DataPackageException, IOException{
         // Get string content version of source file.
         String jsonString = getFileContents(datapackageFilePath);
         
         // Create DataPackage instance from jsonString
-        PackageDefinition dp = new PackageDefinition(jsonString, strict);
+        PackageDescriptor dp = new PackageDescriptor(jsonString, strict);
         
         return dp;
     } 

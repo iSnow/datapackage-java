@@ -16,13 +16,13 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
- * This class implements the Tabular Data Package (TDP) specs. It is not a superclass of PackageDefinition
+ * This class implements the Tabular Data Package (TDP) specs. It is not a superclass of PackageDescriptor
  * as it requires either a folder or a ZIP file to read from. Reason is that TDP's are not parsed
- * from *one* JSON  like regular `PackageDefinition`, but contain references to CSV files either inside
+ * from *one* JSON  like regular `PackageDescriptor`, but contain references to CSV files either inside
  * the ZIP file or as separate files in the file system
  */
 public class DataPackage {
-    private PackageDefinition packageInfo;
+    private PackageDescriptor packageInfo;
     private InputSource source;
 
     /**
@@ -51,7 +51,7 @@ public class DataPackage {
                 throw new DataPackageException("Input zip file does not contain the definition file: " + Constants.DATAPACKAGE_FILENAME);
             }
 
-            packageInfo = new PackageDefinition(zipFile.getInputStream(entry), strict);
+            packageInfo = new PackageDescriptor(zipFile.getInputStream(entry), strict);
         } else {
             throw new DataPackageException("Input is not a ZIP file");
         }
@@ -84,7 +84,7 @@ public class DataPackage {
                 throw new DataPackageException("The source directory does not contain the expected file: " + Constants.DATAPACKAGE_FILENAME);
             }
 
-            packageInfo = new PackageDefinition(datapackageFile, strict);
+            packageInfo = new PackageDescriptor(datapackageFile, strict);
         } else {
             throw new DataPackageException("Input is not a directory");
         }
