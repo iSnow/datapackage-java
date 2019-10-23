@@ -27,8 +27,8 @@ public class Validator {
     public void validate(JSONObject jsonObjectToValidate) throws IOException, DataPackageException, ValidationException{
         
         // If a profile value is provided.
-        if(jsonObjectToValidate.has(Package.JSON_KEY_PROFILE)){
-            String profile = jsonObjectToValidate.getString(Package.JSON_KEY_PROFILE);
+        if(jsonObjectToValidate.has(Constants.JSON_KEY_PROFILE)){
+            String profile = jsonObjectToValidate.getString(Constants.JSON_KEY_PROFILE);
             
             String[] schemes = {"http", "https"};
             UrlValidator urlValidator = new UrlValidator(schemes);
