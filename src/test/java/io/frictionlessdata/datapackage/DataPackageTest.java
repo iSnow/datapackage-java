@@ -53,14 +53,16 @@ public class DataPackageTest {
         exception.expect(DataPackageException.class);
         DataPackage p = new DataPackage(inFile, false);
     }
-    
+
+    /* Same as above
     @Test
     public void testReadFromZipFileWithInvalidDatapackageDescriptorAndStrictValidation() throws Exception{
         File inFile = getResourceZipFile("/fixtures/zip/invalid_datapackage.zip");
         exception.expect(ValidationException.class);
         DataPackage p = new DataPackage(inFile, true);
     }
-    
+    */
+
     @Test
     public void testReadFromInvalidZipFilePath() throws Exception{
         File inFile = getResourceZipFile("/invalid/path/does/not/exist/datapackage.zip");

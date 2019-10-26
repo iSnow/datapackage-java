@@ -1,9 +1,9 @@
 package io.frictionlessdata.datapackage;
 
 import io.frictionlessdata.datapackage.exceptions.DataPackageException;
-import io.frictionlessdata.datapackage.datapackage.FileInputSource;
-import io.frictionlessdata.datapackage.datapackage.InputSource;
-import io.frictionlessdata.datapackage.datapackage.ZipInputSource;
+import io.frictionlessdata.datapackage.inputsource.FileInputSource;
+import io.frictionlessdata.datapackage.inputsource.InputSource;
+import io.frictionlessdata.datapackage.inputsource.ZipInputSource;
 import org.everit.json.schema.ValidationException;
 
 import java.io.*;
@@ -46,7 +46,7 @@ public class DataPackage {
             source = new ZipInputSource(zipFile);
             ZipEntry entry = zipFile.getEntry(Constants.DATAPACKAGE_FILENAME);
 
-            // Throw exception if expected datapackage.json file not found.
+            // Throw exception if expected inputsource.json file not found.
             if (entry == null) {
                 throw new DataPackageException("Input zip file does not contain the definition file: " + Constants.DATAPACKAGE_FILENAME);
             }
@@ -63,8 +63,8 @@ public class DataPackage {
      * @param strict whether to enable strict parsing of JSON. Throws exceptions if a BOM is
      *               encountered and if JSON doesn't match schema
      * @throws IOException
-     * @throws DataPackageException thrown if the input directory doesn't contain a `datapackage.json` file
-     * @throws ValidationException thrown if the `datapackage.json` file doesn't contain a valid JSON string
+     * @throws DataPackageException thrown if the input directory doesn't contain a `inputsource.json` file
+     * @throws ValidationException thrown if the `inputsource.json` file doesn't contain a valid JSON string
      */
     public DataPackage(Path inputPath, boolean strict) throws IOException, DataPackageException, ValidationException{
         if (null == inputPath)
@@ -79,7 +79,7 @@ public class DataPackage {
                     datapackageFile = child;
                 }
             }
-            // Throw exception if expected datapackage.json file not found.
+            // Throw exception if expected inputsource.json file not found.
             if (datapackageFile == null) {
                 throw new DataPackageException("The source directory does not contain the expected file: " + Constants.DATAPACKAGE_FILENAME);
             }

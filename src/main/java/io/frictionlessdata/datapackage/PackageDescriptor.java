@@ -14,6 +14,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,8 +32,8 @@ import static io.frictionlessdata.datapackage.util.JsonUtils.getJsonStringConten
 public class PackageDescriptor {
     private JSONObject jsonObject = new JSONObject();
     private boolean strictValidation = false;
-    private List<Resource> resources;
-    private List<Exception> errors;
+    private List<Resource> resources = new ArrayList<>();
+    private List<Exception> errors = new ArrayList<>();
     private Validator validator = new Validator();
 
     public PackageDescriptor(){
@@ -104,13 +105,13 @@ public class PackageDescriptor {
         writer.write(this.getJson().toString(Constants.JSON_INDENT_FACTOR));
     }
 
-    public void saveJson(OutputStream outStream) throws IOException, DataPackageException{
+    public void saveJson(OutputStream outStream) throws IOException {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(outStream))) {
             writeJson(writer);
         }
     }
 
-    public void saveJson(String outputFilePath) throws IOException, DataPackageException{
+    public void saveJson(String outputFilePath) throws IOException {
         try (FileWriter writer = new FileWriter(outputFilePath)) {
             writeJson(writer);
         }

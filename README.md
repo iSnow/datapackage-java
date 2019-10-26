@@ -28,7 +28,7 @@ JSONArray resources = new JSONArray(resourceArrayList);
 // Add the resources.
 jsonObject.put("resources", resources);
 
-// Build the datapackage.
+inputsource
 Package dp = new Package(jsonObject, true); // Set strict validation to true.
 ```
 

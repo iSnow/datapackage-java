@@ -1,4 +1,4 @@
-package io.frictionlessdata.datapackage.datapackage;
+package io.frictionlessdata.datapackage.inputsource;
 
 import java.net.URL;
 

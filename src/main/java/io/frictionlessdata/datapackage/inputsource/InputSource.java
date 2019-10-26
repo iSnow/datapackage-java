@@ -1,4 +1,4 @@
-package io.frictionlessdata.datapackage.datapackage;
+package io.frictionlessdata.datapackage.inputsource;
 
 public interface InputSource<T> {
 
