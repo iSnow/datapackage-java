@@ -1,6 +1,7 @@
 package io.frictionlessdata.datapackage;
 
 import io.frictionlessdata.datapackage.exceptions.DataPackageException;
+import io.frictionlessdata.datapackage.inputsource.InputSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.everit.json.schema.ValidationException;
@@ -8,15 +9,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.print.DocFlavor;
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.frictionlessdata.datapackage.util.JsonUtils.getJsonStringContentFromInputStream;
 
@@ -37,6 +40,24 @@ public class PackageDescriptor {
     private Validator validator = new Validator();
 
     public PackageDescriptor(){
+    }
+
+    /**
+     * Load from InputStream.
+     * @param inSource InputStream to read `datapackage.json` content from
+     * @param strict enable strict validation (don't allow BOM in JSON, validate against JSON schema)
+     * @throws DataPackageException thrown if the `InputStream` doesn't contain a JSON string
+     * @throws ValidationException thrown if the `InputStream` doesn't contain a valid JSON string
+     */
+    public PackageDescriptor(InputSource inSource, boolean strict) throws Exception, DataPackageException, ValidationException {
+        this.strictValidation = strict;
+        String content = inSource.getDescriptorContent();
+
+        if (!strictValidation && StringUtils.isEmpty(content)) {
+            content = content.replaceFirst("\\uFEFF", "");
+        }
+
+        parseAndValidate (content);
     }
 
 
@@ -401,5 +422,4 @@ public class PackageDescriptor {
 
         return dereferencedObj;
     }
-
 }

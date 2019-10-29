@@ -5,4 +5,6 @@ public interface InputSource<T> {
     T getInput();
 
     void setInput(T input);
+
+    String getDescriptorContent() throws Exception;
 }
