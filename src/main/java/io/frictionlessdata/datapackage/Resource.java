@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.collections.iterators.IteratorChain;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -89,7 +90,8 @@ public class Resource {
         this.name = name;
         this.data = data;
         this.format = format;
-        this.schema = new Schema(schema.toString(), true);
+        if (schema != null)
+            this.schema = new Schema(schema.toString(), true);
     }
     
     public Resource(String name, Object path, JSONObject schema, JSONObject dialect, String profile, String title,
@@ -98,7 +100,8 @@ public class Resource {
         
         this.name = name;
         this.path = path;
-        this.schema = new Schema(schema.toString(), true);
+        if (schema != null)
+            this.schema = new Schema(schema.toString(), true);
         this.dialect = dialect;
         this.profile = profile;
         this.title = title;
@@ -119,7 +122,8 @@ public class Resource {
         this.name = name;
         this.data = data;
         this.format = format;
-        this.schema = new Schema(schema.toString(), true);
+        if (schema != null)
+            this.schema = new Schema(schema.toString(), true);
         this.profile = profile;
         this.title = title;
         this.description = description;
