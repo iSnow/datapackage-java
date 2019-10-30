@@ -40,7 +40,7 @@ class ValidatorTest {
     }
     
     @Test
-    void testValidationWithInvalidProfileId() throws DataPackageException, IOException{
+    void testValidationWithInvalidProfileId() throws Exception{
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/multi_data_datapackage.json");
         PackageDescriptor dp = new PackageDescriptor(url, true);
         
@@ -52,7 +52,7 @@ class ValidatorTest {
     }
     
     @Test
-    void testValidationWithValidProfileUrl() throws DataPackageException, IOException{
+    void testValidationWithValidProfileUrl() throws Exception{
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/multi_data_datapackage.json");
         PackageDescriptor dp = new PackageDescriptor(url, true);
         dp.addProperty("profile", "https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/main/resources/schemas/data-package.json");
@@ -64,7 +64,7 @@ class ValidatorTest {
     }
     
     @Test
-    void testValidationWithInvalidProfileUrl() throws DataPackageException, IOException{
+    void testValidationWithInvalidProfileUrl() throws Exception{
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/multi_data_datapackage.json");
         PackageDescriptor dp = new PackageDescriptor(url, true);
         

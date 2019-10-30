@@ -1,6 +1,7 @@
 package io.frictionlessdata.datapackage;
 
 import io.frictionlessdata.datapackage.exceptions.DataPackageException;
+import io.frictionlessdata.tableschema.Schema;
 import io.frictionlessdata.tableschema.Table;
 import io.frictionlessdata.tableschema.TableIterator;
 import java.io.File;
@@ -43,7 +44,7 @@ public class Resource {
     private JSONArray licenses = null;
 
     // Schema
-    private JSONObject schema = null;
+    private Schema schema = null;
     
     public final static String FORMAT_CSV = "csv";
     public final static String FORMAT_JSON = "json";
@@ -68,36 +69,36 @@ public class Resource {
     public final static String JSON_KEY_SOURCES = "sources";
     public final static String JSON_KEY_LICENSES = "licenses";
     
-    public Resource(String name, Object path){
+    public Resource(String name, Object path) throws Exception {
         this(name, path, new JSONObject());
     }
     
-    public Resource(String name, Object path, JSONObject schema){
+    public Resource(String name, Object path, JSONObject schema) throws Exception {
         this.name = name;
         this.path = path;
         if(schema.length() > 0){
-            this.schema = schema;
+            this.schema = new Schema(schema.toString(), true);
         }
     }
         
-    public Resource(String name, Object data, String format){
+    public Resource(String name, Object data, String format) throws Exception {
         this(name, data, format, null);
     }
     
-    public Resource(String name, Object data, String format, JSONObject schema){
+    public Resource(String name, Object data, String format, JSONObject schema) throws Exception {
         this.name = name;
         this.data = data;
         this.format = format;
-        this.schema = schema;
+        this.schema = new Schema(schema.toString(), true);
     }
     
     public Resource(String name, Object path, JSONObject schema, JSONObject dialect, String profile, String title,
             String description, String mediaType,
-            String encoding, Integer bytes, String hash, JSONArray sources, JSONArray licenses){
+            String encoding, Integer bytes, String hash, JSONArray sources, JSONArray licenses) throws Exception {
         
         this.name = name;
         this.path = path;
-        this.schema = schema;
+        this.schema = new Schema(schema.toString(), true);
         this.dialect = dialect;
         this.profile = profile;
         this.title = title;
@@ -113,12 +114,12 @@ public class Resource {
     
     public Resource(String name, Object data, String format, JSONObject schema, String profile,
             String title, String description, String mediaType,
-            String encoding, Integer bytes, String hash, JSONArray sources, JSONArray licenses){
+            String encoding, Integer bytes, String hash, JSONArray sources, JSONArray licenses) throws Exception {
         
         this.name = name;
         this.data = data;
         this.format = format;
-        this.schema = schema;
+        this.schema = new Schema(schema.toString(), true);
         this.profile = profile;
         this.title = title;
         this.description = description;
@@ -211,7 +212,7 @@ public class Resource {
             // Data is not String, hence in JSON Array format.
             else if(this.getData() instanceof JSONArray && this.getFormat().equalsIgnoreCase(FORMAT_JSON)){
                 JSONArray dataJsonArray = (JSONArray)this.getData();            
-                Table table = new Table(dataJsonArray);
+                Table table = new Table(dataJsonArray.toString());
                 return table.iterator();
                 
             }else{
@@ -262,7 +263,7 @@ public class Resource {
             // Data is not String, hence in JSON Array format.
             else if(this.getData() instanceof JSONArray && this.getFormat().equalsIgnoreCase(FORMAT_JSON)){
                 JSONArray dataJsonArray = (JSONArray)this.getData();            
-                Table table = new Table(dataJsonArray);
+                Table table = new Table(dataJsonArray.toString());
                 return table.read(cast);
                 
             }else{
@@ -309,7 +310,7 @@ public class Resource {
             // Data is not String, hence in JSON Array format.
             else if(this.getData() instanceof JSONArray && this.getFormat().equalsIgnoreCase(FORMAT_JSON)){
                 JSONArray dataJsonArray = (JSONArray)this.getData();            
-                Table table = new Table(dataJsonArray);
+                Table table = new Table(dataJsonArray.toString());
                 return table.getHeaders();
                 
             }else{
@@ -519,7 +520,7 @@ public class Resource {
         this.dialect = dialect;
     }    
     
-    public JSONObject getSchema(){
+    public Schema getSchema(){
         return this.schema;
     }
 

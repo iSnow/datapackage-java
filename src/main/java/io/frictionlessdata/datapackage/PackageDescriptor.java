@@ -9,17 +9,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.print.DocFlavor;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static io.frictionlessdata.datapackage.util.JsonUtils.getJsonStringContentFromInputStream;
 
@@ -68,7 +66,7 @@ public class PackageDescriptor {
      * @throws DataPackageException thrown if the `InputStream` doesn't contain a JSON string
      * @throws ValidationException thrown if the `InputStream` doesn't contain a valid JSON string
      */
-    public PackageDescriptor(InputStream inStream, boolean strict) throws IOException, DataPackageException, ValidationException {
+    public PackageDescriptor(InputStream inStream, boolean strict) throws Exception {
         this.strictValidation = strict;
 
         String content = getJsonStringContentFromInputStream(inStream, this.strictValidation);
@@ -83,7 +81,7 @@ public class PackageDescriptor {
      * @throws DataPackageException thrown if the `InputStream` doesn't contain a JSON string
      * @throws ValidationException thrown if the `InputStream` doesn't contain a valid JSON string
      */
-    public PackageDescriptor(String jsonStringSource, boolean strict) throws IOException, DataPackageException, ValidationException{
+    public PackageDescriptor(String jsonStringSource, boolean strict) throws Exception{
         this.strictValidation = strict;
 
         // If String representation of desriptor JSON object is provided.
@@ -99,7 +97,7 @@ public class PackageDescriptor {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public PackageDescriptor(URL urlSource, boolean strict) throws DataPackageException, ValidationException, IOException, FileNotFoundException{
+    public PackageDescriptor(URL urlSource, boolean strict) throws Exception{
         this.strictValidation = strict;
 
         // Get string content of given remove file.
@@ -115,7 +113,7 @@ public class PackageDescriptor {
      * @throws ValidationException
      * @throws FileNotFoundException
      */
-    public PackageDescriptor(Path filePath, boolean strict) throws IOException, DataPackageException, ValidationException, FileNotFoundException {
+    public PackageDescriptor(Path filePath, boolean strict) throws Exception {
         this.strictValidation = strict;
 
         String content = getJsonStringContentFromInputStream(Files.newInputStream(filePath), this.strictValidation);
@@ -244,7 +242,7 @@ public class PackageDescriptor {
      * @throws IOException thrown if JSON parsing fails
      * @throws DataPackageException if `jsonContent` is either null or empty
      */
-    private void parseAndValidate (String jsonContent) throws IOException, DataPackageException {
+    private void parseAndValidate (String jsonContent) throws Exception {
         if (!StringUtils.isEmpty(jsonContent)) {
             JSONObject sourceJsonObject = new JSONObject(jsonContent);
 
@@ -311,7 +309,7 @@ public class PackageDescriptor {
         return new String(Files.readAllBytes(Paths.get(absoluteFilePath)));
     }
 
-    private void setJson(JSONObject jsonObjectSource) throws IOException, MalformedURLException, FileNotFoundException, DataPackageException{
+    private void setJson(JSONObject jsonObjectSource) throws Exception{
         this.jsonObject = jsonObjectSource;
 
         // Create Resource list, is there are resources.
@@ -378,7 +376,7 @@ public class PackageDescriptor {
         }
     }
 
-    private JSONObject getDereferencedObject(Object obj) throws IOException, FileNotFoundException, MalformedURLException{
+    private JSONObject getDereferencedObject(Object obj) throws IOException{
         // The JSONObject that will represent the schema.
         JSONObject dereferencedObj = null;
 

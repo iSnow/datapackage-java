@@ -87,7 +87,6 @@ public class DataPackage {
     public DataPackage(URL inputUrl, boolean strict) throws Exception {
         if (null == inputUrl)
             throw new DataPackageException("Input Path cannot be null");
-        URI uri = inputUrl.toURI();
         // first try parsing as JSON
         try {
             source = new UrlInputSource(inputUrl);
@@ -98,39 +97,6 @@ public class DataPackage {
         }
     }
 
-
-    /**
-     * Load from a path
-     * @param inputPath File path of the input directory
-     * @param strict whether to enable strict parsing of JSON. Throws exceptions if a BOM is
-     *               encountered and if JSON doesn't match schema
-     * @throws IOException
-     * @throws DataPackageException thrown if the input directory doesn't contain a `inputsource.json` file
-     * @throws ValidationException thrown if the `inputsource.json` file doesn't contain a valid JSON string
-     */
-    /*public DataPackage(Path inputPath, boolean strict) throws IOException, DataPackageException, ValidationException{
-        if (null == inputPath)
-            throw new DataPackageException("Input Path cannot be null");
-        if(inputPath.toFile().isDirectory()) {
-            source = new FileInputSource(inputPath);
-            Path datapackageFile = null;
-            Iterator<Path> iter = inputPath.iterator();
-            while (iter.hasNext()) {
-                Path child = iter.next();
-                if (child.getFileName().toString().equals(Constants.DATAPACKAGE_FILENAME)) {
-                    datapackageFile = child;
-                }
-            }
-            // Throw exception if expected inputsource.json file not found.
-            if (datapackageFile == null) {
-                throw new DataPackageException("The source directory does not contain the expected file: " + Constants.DATAPACKAGE_FILENAME);
-            }
-
-            packageInfo = new PackageDescriptor(datapackageFile, strict);
-        } else {
-            throw new DataPackageException("Input is not a directory");
-        }
-    }*/
 
     public void saveToZip(Path outputFilePath) throws IOException, DataPackageException {
         try(FileOutputStream fos = new FileOutputStream(outputFilePath.toFile())){
@@ -148,7 +114,7 @@ public class DataPackage {
         }
     }
 
-    public void saveToDirectory(Path outputFilePath) throws IOException, DataPackageException {
+    public void saveToDirectory(Path outputFilePath) throws IOException {
         File dir = outputFilePath.toFile();
         if (!dir.exists()) {
             dir.mkdirs();
