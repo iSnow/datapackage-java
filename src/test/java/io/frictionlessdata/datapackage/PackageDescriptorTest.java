@@ -17,24 +17,24 @@ import java.util.List;
 import org.everit.json.schema.ValidationException;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.Assert;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
  * 
  */
 public class PackageDescriptorTest {
-    
+    /*
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
     
     @Rule
     public final ExpectedException exception = ExpectedException.none();
-    
+    */
+
     @Test
     public void testLoadFromJsonString() throws DataPackageException, IOException{
 
@@ -42,7 +42,7 @@ public class PackageDescriptorTest {
         PackageDescriptor dp = this.getDefaultTestDataPackage(true);
         
         // Assert
-        Assert.assertNotNull(dp);
+        Assertions.assertNotNull(dp);
     }
 
     /*
@@ -68,7 +68,7 @@ public class PackageDescriptorTest {
         PackageDescriptor dp = new PackageDescriptor(jsonObject, true);
         
         // Assert
-        Assert.assertNotNull(dp);
+        Assertions.assertNotNull(dp);
     }
     
     @Test
@@ -90,7 +90,7 @@ public class PackageDescriptorTest {
         PackageDescriptor dp = new PackageDescriptor(jsonObject);
         
         // Assert
-        Assert.assertNotNull(dp);
+        Assertions.assertNotNull(dp);
     }
 
      */
@@ -98,9 +98,10 @@ public class PackageDescriptorTest {
 
     @Test
     public void testLoadFromFileWhenPathDoesNotExist() throws Exception {
-        exception.expect(NoSuchFileException.class);
-        Path path = Paths.get("/this/path/does/not/exist");
-        PackageDescriptor dp = new PackageDescriptor(path,true);
+        assertThrows(NoSuchFileException.class, () -> {
+            Path path = Paths.get("/this/path/does/not/exist");
+            PackageDescriptor dp = new PackageDescriptor(path, true);
+        });
     }
     
     @Test
@@ -118,7 +119,7 @@ public class PackageDescriptorTest {
 
         // We're not asserting the String value since the order of the JSONObject elements is not guaranteed.
         // Just compare the length of the String, should be enough.
-        Assert.assertEquals(dp.getJson().length(), new JSONObject(jsonString).length());
+        Assertions.assertEquals(dp.getJson().length(), new JSONObject(jsonString).length());
     }
 
     
@@ -130,8 +131,9 @@ public class PackageDescriptorTest {
         // Get path of URL
         Path path = Paths.get(sourceFileUrl.toURI());
 
-        exception.expect(JSONException.class);
-        PackageDescriptor dp = new PackageDescriptor(path, true);
+        assertThrows(JSONException.class, () -> {
+            PackageDescriptor dp = new PackageDescriptor(path, true);
+        });
     }
    
     
@@ -141,7 +143,7 @@ public class PackageDescriptorTest {
         // But could not resolve AbstractMethodError: https://stackoverflow.com/a/32696152/4030804
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/multi_data_datapackage.json");
         PackageDescriptor dp = new PackageDescriptor(url, true);
-        Assert.assertNotNull(dp.getJson());
+        Assertions.assertNotNull(dp.getJson());
     }
     
     @Test
@@ -149,9 +151,10 @@ public class PackageDescriptorTest {
         // Preferably we would use mockito/powermock to mock URL Connection
         // But could not resolve AbstractMethodError: https://stackoverflow.com/a/32696152/4030804
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/simple_invalid_datapackage.json");
-        exception.expect(ValidationException.class);
-        PackageDescriptor dp = new PackageDescriptor(url, true);
-        
+
+        assertThrows(ValidationException.class, () -> {
+            PackageDescriptor dp = new PackageDescriptor(url, true);
+        });
     }
     
     @Test
@@ -159,7 +162,7 @@ public class PackageDescriptorTest {
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/simple_invalid_datapackage.json");
         
         PackageDescriptor dp = new PackageDescriptor(url, false);
-        Assert.assertNotNull(dp.getJson());
+        Assertions.assertNotNull(dp.getJson());
     }
     
     @Test
@@ -167,16 +170,21 @@ public class PackageDescriptorTest {
         // Preferably we would use mockito/powermock to mock URL Connection
         // But could not resolve AbstractMethodError: https://stackoverflow.com/a/32696152/4030804
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/NON-EXISTANT-FOLDER/multi_data_datapackage.json");
-        exception.expect(FileNotFoundException.class);
-        PackageDescriptor dp = new PackageDescriptor(url, true);
+
+        assertThrows(FileNotFoundException.class, () -> {
+            PackageDescriptor dp = new PackageDescriptor(url, true);
+        });
     }
     
     @Test
     public void testLoadFromJsonFileResourceWithStrictValidationForInvalidNullPath() throws IOException, MalformedURLException, DataPackageException{
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/invalid_multi_data_datapackage.json");
-        
-        exception.expectMessage("Invalid Resource. The path property or the data and format properties cannot be null.");
-        PackageDescriptor dp = new PackageDescriptor(url, true);
+
+
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            PackageDescriptor dp = new PackageDescriptor(url, true);
+        });
+        Assertions.assertEquals("Invalid Resource. The path property or the data and format properties cannot be null.", exception.getMessage());
     }
     
     @Test
@@ -184,7 +192,7 @@ public class PackageDescriptorTest {
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/invalid_multi_data_datapackage.json");
         
         PackageDescriptor dp = new PackageDescriptor(url, false);
-        Assert.assertEquals("Invalid Resource. The path property or the data and format properties cannot be null.", dp.getErrors().get(0).getMessage());
+        Assertions.assertEquals("Invalid Resource. The path property or the data and format properties cannot be null.", dp.getErrors().get(0).getMessage());
     }
     
     @Test
@@ -195,9 +203,11 @@ public class PackageDescriptorTest {
         Resource resource = new Resource("resource-name", (Object)null, // Path property is null.
             (JSONObject)null, (JSONObject)null, null, null, null, null, // Casting to JSONObject to resolve ambiguous constructor reference.
             null, null, null, null, null);
-        
-        exception.expectMessage("Invalid Resource. The path property or the data and format properties cannot be null.");
-        dp.addResource(resource); 
+
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            dp.addResource(resource);
+        });
+        Assertions.assertEquals("Invalid Resource. The path property or the data and format properties cannot be null.", exception.getMessage());
     }
     
     @Test
@@ -208,9 +218,11 @@ public class PackageDescriptorTest {
         // format property is null but data is not null.
         Resource resource = new Resource("resource-name", "data.csv", (String)null, // Format is null when it shouldn't. Casting to String to resolve ambiguous constructor reference.
                 null, null, null, null, null, null, null, null, null, null);
-        
-        exception.expectMessage("Invalid Resource. The path property or the data and format properties cannot be null.");
-        dp.addResource(resource); 
+
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            dp.addResource(resource);
+        });
+        Assertions.assertEquals("Invalid Resource. The path property or the data and format properties cannot be null.", exception.getMessage());
     }
     
     @Test
@@ -221,16 +233,18 @@ public class PackageDescriptorTest {
         // data property is null but format is not null.
         Resource resource = new Resource("resource-name", null, "csv", // data is null when it shouldn't
                 null, null, null, null, null, null, null, null, null, null);
-        
-        exception.expectMessage("Invalid Resource. The path property or the data and format properties cannot be null.");
-        dp.addResource(resource);
+
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            dp.addResource(resource);
+        });
+        Assertions.assertEquals("Invalid Resource. The path property or the data and format properties cannot be null.", exception.getMessage());
     }
     
     @Test
     public void testGetResources() throws DataPackageException, IOException{
         // Create simple multi DataPackage from Json String
         PackageDescriptor dp = this.getDefaultTestDataPackage(true);
-        Assert.assertEquals(5, dp.getResources().size());
+        Assertions.assertEquals(5, dp.getResources().size());
     }
     
     @Test
@@ -238,7 +252,7 @@ public class PackageDescriptorTest {
         // Create simple multi DataPackage from Json String
         PackageDescriptor dp = this.getDefaultTestDataPackage(true);
         Resource resource = dp.getResource("third-resource");
-        Assert.assertNotNull(resource);
+        Assertions.assertNotNull(resource);
     }
     
     @Test
@@ -246,46 +260,48 @@ public class PackageDescriptorTest {
         // Create simple multi DataPackage from Json String
         PackageDescriptor dp = this.getDefaultTestDataPackage(true);
         Resource resource = dp.getResource("non-existing-resource");
-        Assert.assertNull(resource);
+        Assertions.assertNull(resource);
     }
     
     @Test
     public void testRemoveResource() throws DataPackageException, IOException{
         PackageDescriptor dp = this.getDefaultTestDataPackage(true);
         
-        Assert.assertEquals(5, dp.getResources().size());
+        Assertions.assertEquals(5, dp.getResources().size());
         
         dp.removeResource("second-resource");
-        Assert.assertEquals(4, dp.getResources().size());
+        Assertions.assertEquals(4, dp.getResources().size());
         
         dp.removeResource("third-resource");
-        Assert.assertEquals(3, dp.getResources().size());
+        Assertions.assertEquals(3, dp.getResources().size());
         
         dp.removeResource("third-resource");
-        Assert.assertEquals(3, dp.getResources().size());
+        Assertions.assertEquals(3, dp.getResources().size());
     }
     
     @Test
     public void testAddValidResource() throws DataPackageException, IOException{
         PackageDescriptor dp = this.getDefaultTestDataPackage(true);
         
-        Assert.assertEquals(5, dp.getResources().size());
+        Assertions.assertEquals(5, dp.getResources().size());
         
         List<String> paths = new ArrayList<>(Arrays.asList("cities.csv", "cities2.csv"));
         Resource resource = new Resource("new-resource", paths);
         dp.addResource(resource);
-        Assert.assertEquals(6, dp.getResources().size());
+        Assertions.assertEquals(6, dp.getResources().size());
         
         Resource gotResource = dp.getResource("new-resource");
-        Assert.assertNotNull(gotResource);
+        Assertions.assertNotNull(gotResource);
     }
     
     @Test
     public void testAddInvalidResourceWithStrictValidation() throws DataPackageException, IOException{
         PackageDescriptor dp = this.getDefaultTestDataPackage(true);
 
-        exception.expectMessage("The resource does not have a name property.");
-        dp.addResource(new Resource(null, null));
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            dp.addResource(new Resource(null, null));
+        });
+        Assertions.assertEquals("The resource does not have a name property.", exception.getMessage());
     }
     
     @Test
@@ -293,8 +309,8 @@ public class PackageDescriptorTest {
         PackageDescriptor dp = this.getDefaultTestDataPackage(false);
         dp.addResource(new Resource(null, null));
         
-        Assert.assertEquals(1, dp.getErrors().size());
-        Assert.assertEquals("The resource does not have a name property.", dp.getErrors().get(0).getMessage());
+        Assertions.assertEquals(1, dp.getErrors().size());
+        Assertions.assertEquals("The resource does not have a name property.", dp.getErrors().get(0).getMessage());
     }
 
     
@@ -304,9 +320,11 @@ public class PackageDescriptorTest {
         
         List<String> paths = new ArrayList<>(Arrays.asList("cities.csv", "cities2.csv"));
         Resource resource = new Resource("third-resource", paths);
-        
-        exception.expectMessage("A resource with the same name already exists.");
-        dp.addResource(resource);
+
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            dp.addResource(resource);
+        });
+        Assertions.assertEquals("A resource with the same name already exists.", exception.getMessage());
     }
     
     @Test
@@ -317,8 +335,8 @@ public class PackageDescriptorTest {
         Resource resource = new Resource("third-resource", paths);
         dp.addResource(resource);
         
-        Assert.assertEquals(1, dp.getErrors().size());
-        Assert.assertEquals("A resource with the same name already exists.", dp.getErrors().get(0).getMessage());
+        Assertions.assertEquals(1, dp.getErrors().size());
+        Assertions.assertEquals("A resource with the same name already exists.", dp.getErrors().get(0).getMessage());
     }
     
     
@@ -326,7 +344,8 @@ public class PackageDescriptorTest {
     public void testSaveToJsonFile() throws Exception{
         String sourceFileName = "test_save_datapackage.json";
 
-        File createdFile = folder.newFile(sourceFileName);
+        //File createdFile = folder.newFile(sourceFileName);
+        File createdFile = Files.createTempFile("datapackage-", ".json", null).toFile();
         
         PackageDescriptor savedPackageDescriptor = this.getDefaultTestDataPackage(true);
         savedPackageDescriptor.saveJson(createdFile.getAbsolutePath());
@@ -338,7 +357,7 @@ public class PackageDescriptorTest {
         // Check if two data packages are have the same key/value pairs.
         // For some reason JSONObject.similar() is not working even though both
         // json objects are exactly the same. Just compare lengths then.
-        Assert.assertEquals(readPackageDescriptor.getJson().toString().length(), savedPackageDescriptor.getJson().toString().length());
+        Assertions.assertEquals(readPackageDescriptor.getJson().toString().length(), savedPackageDescriptor.getJson().toString().length());
         createdFile.delete();
     }
 
@@ -376,8 +395,8 @@ public class PackageDescriptorTest {
             String city = record[0];
             String location = record[1];
             
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[0], city);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[1], location);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[0], city);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[1], location);
             
             expectedDataIndex++;
         } 
@@ -404,8 +423,8 @@ public class PackageDescriptorTest {
             String city = record[0];
             String location = record[1];
             
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[0], city);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[1], location);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[0], city);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[1], location);
             
             expectedDataIndex++;
         } 
@@ -423,7 +442,7 @@ public class PackageDescriptorTest {
         JSONObject schemaJson = new JSONObject(schemaJsonString);
         
         // Compare.
-        Assert.assertTrue(schemaJson.similar(resource.getSchema()));
+        Assertions.assertTrue(schemaJson.similar(resource.getSchema()));
     }
     
     @Test
@@ -438,7 +457,7 @@ public class PackageDescriptorTest {
         JSONObject schemaJson = new JSONObject(schemaJsonString);
         
         // Compare.
-        Assert.assertTrue(schemaJson.similar(resource.getSchema()));
+        Assertions.assertTrue(schemaJson.similar(resource.getSchema()));
     }
     
     /** TODO: Implement more thorough testing.
@@ -461,7 +480,7 @@ public class PackageDescriptorTest {
         JSONObject dialectJson = new JSONObject(dialectJsonString);
         
         // Compare.
-        Assert.assertTrue(dialectJson.similar(resource.getDialect()));
+        Assertions.assertTrue(dialectJson.similar(resource.getDialect()));
     }
     
     private PackageDescriptor getDataPackageFromFilePath(String datapackageFilePath, boolean strict) throws DataPackageException, IOException{

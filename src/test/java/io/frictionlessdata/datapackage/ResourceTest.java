@@ -10,8 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -43,9 +43,9 @@ public class ResourceTest {
             String year = record[1];
             String population = record[2];
             
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[0], city);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[1], year);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[2], population);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[0], city);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[1], year);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[2], population);
             
             expectedDataIndex++;
         } 
@@ -75,9 +75,9 @@ public class ResourceTest {
             String year = record[1];
             String population = record[2];
             
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[0], city);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[1], year);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[2], population);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[0], city);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[1], year);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[2], population);
             
             expectedDataIndex++;
         }    
@@ -111,8 +111,8 @@ public class ResourceTest {
             String city = record[0];
             String coords = record[1];
             
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[0], city);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[1], coords);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[0], city);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[1], coords);
             
             expectedDataIndex++;
         }
@@ -146,8 +146,8 @@ public class ResourceTest {
             String city = record[0];
             String coords = record[1];
             
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[0], city);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[1], coords);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[0], city);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[1], coords);
             
             expectedDataIndex++;
         }
@@ -176,9 +176,9 @@ public class ResourceTest {
         while(iter.hasNext()){
             Object[] record = iter.next();
             
-            Assert.assertEquals(String.class, record[0].getClass());
-            Assert.assertEquals(Integer.class, record[1].getClass());
-            Assert.assertEquals(Integer.class, record[2].getClass());
+            Assertions.assertEquals(String.class, record[0].getClass());
+            Assertions.assertEquals(Integer.class, record[1].getClass());
+            Assertions.assertEquals(Integer.class, record[2].getClass());
         }
     }
     
@@ -204,9 +204,9 @@ public class ResourceTest {
             String year = record[1];
             String population = record[2];
             
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[0], city);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[1], year);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[2], population);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[0], city);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[1], year);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[2], population);
             
             expectedDataIndex++;
         }  
@@ -251,9 +251,9 @@ public class ResourceTest {
             String year = record[1];
             String population = record[2];
             
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[0], city);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[1], year);
-            Assert.assertEquals(expectedData.get(expectedDataIndex)[2], population);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[0], city);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[1], year);
+            Assertions.assertEquals(expectedData.get(expectedDataIndex)[2], population);
             
             expectedDataIndex++;
         } 
@@ -271,7 +271,7 @@ public class ResourceTest {
         resource.setProfile(Profile.PROFILE_TABULAR_DATA_RESOURCE);
         
         // Assert
-        Assert.assertEquals(3, resource.read().size());
+        Assertions.assertEquals(3, resource.read().size());
     }
     
     @Test
@@ -286,9 +286,9 @@ public class ResourceTest {
         resource.setProfile(Profile.PROFILE_TABULAR_DATA_RESOURCE);
         
         // Assert
-        Assert.assertEquals("city", resource.getHeaders()[0]);
-        Assert.assertEquals("year", resource.getHeaders()[1]);
-        Assert.assertEquals("population", resource.getHeaders()[2]);
+        Assertions.assertEquals("city", resource.getHeaders()[0]);
+        Assertions.assertEquals("year", resource.getHeaders()[1]);
+        Assertions.assertEquals("population", resource.getHeaders()[2]);
     }
 
 

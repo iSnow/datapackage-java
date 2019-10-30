@@ -6,24 +6,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.everit.json.schema.ValidationException;
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test calls for JSON Validator class.
  * 
  */
 public class ValidatorTest {
-    
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-    
+
     private Validator validator = null;
-    
-    @Before
+
+    @BeforeAll
     public void setup(){
         validator = new Validator();
     }
@@ -31,17 +28,19 @@ public class ValidatorTest {
     @Test
     public void testValidatingInvalidJsonObject() throws IOException, DataPackageException {
         JSONObject datapackageJsonObject = new JSONObject("{\"invalid\" : \"json\"}");
-        
-        exception.expect(ValidationException.class);
-        validator.validate(datapackageJsonObject);  
+
+        assertThrows(ValidationException.class, () -> {
+            validator.validate(datapackageJsonObject);
+        });
     }
     
     @Test
     public void testValidatingInvalidJsonString() throws IOException, DataPackageException{
         String datapackageJsonString = "{\"invalid\" : \"json\"}";
-        
-        exception.expect(ValidationException.class);
-        validator.validate(datapackageJsonString);   
+
+        assertThrows(ValidationException.class, () -> {
+            validator.validate(datapackageJsonString);
+        });
     }
     
     @Test
@@ -51,9 +50,11 @@ public class ValidatorTest {
         
         String invalidProfileId = "INVALID_PROFILE_ID";
         dp.addProperty("profile", invalidProfileId);
-        
-        exception.expectMessage("Invalid profile id: " + invalidProfileId);
-        dp.validate();
+
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            dp.validate();
+        });
+        assertEquals("Invalid profile id: " + invalidProfileId, exception.getMessage());
     }
     
     @Test
@@ -65,7 +66,7 @@ public class ValidatorTest {
         dp.validate();
         
         // No exception thrown, test passes.
-        Assert.assertEquals("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/main/resources/schemas/data-package.json", dp.getProperty("profile"));
+        assertEquals("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/main/resources/schemas/data-package.json", dp.getProperty("profile"));
     }
     
     @Test
@@ -76,8 +77,10 @@ public class ValidatorTest {
         
         String invalidProfileUrl = "https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/main/resources/schemas/INVALID.json";
         dp.addProperty("profile", invalidProfileUrl);
-        
-        exception.expectMessage("Invalid profile schema URL: " + invalidProfileUrl);
-        dp.validate();
+
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            dp.validate();
+        });
+        assertEquals("Invalid profile schema URL: " + invalidProfileUrl, exception.getMessage());
     }
 }

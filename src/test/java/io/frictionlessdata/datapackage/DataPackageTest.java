@@ -1,11 +1,8 @@
 package io.frictionlessdata.datapackage;
 
 import io.frictionlessdata.datapackage.exceptions.DataPackageException;
-import org.everit.json.schema.ValidationException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,17 +14,20 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  *
  * 
  */
 public class DataPackageTest {
-    
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-    
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
+
+    @Test
+    @DisplayName("Must correctly read a well-formed ZIP-packaged DataPackage")
+    public void testReadFromValidZipFile() throws Exception{
+        File inFile = getResourceZipFile("/testsuite-data/zip/countries-and-currencies.zip");
+        new DataPackage(inFile, false);
+    }
 
     /*
     @Test
@@ -48,38 +48,23 @@ public class DataPackageTest {
     }
     */
     @Test
+    @DisplayName("Must correctly throw reading an invalid ZIP-packaged DataPackage where the Descriptor's file name isn't 'datapackage.json'")
     public void testReadFromZipFileWithInvalidDatapackageFilenameInside() throws Exception{
-        File inFile = getResourceZipFile("/fixtures/zip/invalid_filename_datapackage.zip");
-        exception.expect(DataPackageException.class);
-        DataPackage p = new DataPackage(inFile, false);
+        File inFile = getResourceZipFile("/testsuite-data/zip/invalid_filename_datapackage.zip");
+        assertThrows(DataPackageException.class, () -> {
+            DataPackage p = new DataPackage(inFile, false);
+        });
     }
 
-    /* Same as above
     @Test
-    public void testReadFromZipFileWithInvalidDatapackageDescriptorAndStrictValidation() throws Exception{
-        File inFile = getResourceZipFile("/fixtures/zip/invalid_datapackage.zip");
-        exception.expect(ValidationException.class);
-        DataPackage p = new DataPackage(inFile, true);
-    }
-    */
-
-    @Test
+    @DisplayName("Must correctly throw trying to read a DataPackage from a non-existing path")
     public void testReadFromInvalidZipFilePath() throws Exception{
         File inFile = getResourceZipFile("/invalid/path/does/not/exist/datapackage.zip");
-        exception.expect(IOException.class);
-        DataPackage p = new DataPackage(inFile, false);
+        assertThrows(IOException.class, () -> {
+            DataPackage p = new DataPackage(inFile, false);
+        });
     }
 
-    
-    private PackageDescriptor getDataPackageFromFilePath(boolean strict, String datapackageFilePath) throws DataPackageException, IOException{
-        // Get string content version of source file.
-        String jsonString = getFileContents(datapackageFilePath);
-        
-        // Create DataPackage instance from jsonString
-        PackageDescriptor dp = new PackageDescriptor(jsonString, strict);
-        
-        return dp;
-    } 
 
     private static String getFileContents(String fileName) {
         try {

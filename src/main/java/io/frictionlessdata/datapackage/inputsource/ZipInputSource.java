@@ -13,6 +13,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -71,7 +72,16 @@ public class ZipInputSource implements InputSource<ZipFile> {
             zis.closeEntry();
             zis.close();
         } else {
-            ZipEntry entry = source.getEntry(Constants.DATAPACKAGE_FILENAME);
+            ZipEntry entry = null;
+            Enumeration entries = source.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry e = (ZipEntry)entries.nextElement();
+                if ((e.getName().equals(Constants.DATAPACKAGE_FILENAME))
+                    || (e.getName().endsWith("/"+Constants.DATAPACKAGE_FILENAME))) {
+                    entry = e;
+                    break;
+                }
+            }
             // Throw exception if expected inputsource.json file not found.
             if (entry == null) {
                 throw new DataPackageException("Input zip file does not contain the definition file: " + Constants.DATAPACKAGE_FILENAME);
