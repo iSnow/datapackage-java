@@ -5,23 +5,15 @@ import io.frictionlessdata.datapackage.inputsource.FileInputSource;
 import io.frictionlessdata.datapackage.inputsource.InputSource;
 import io.frictionlessdata.datapackage.inputsource.UrlInputSource;
 import io.frictionlessdata.datapackage.inputsource.ZipInputSource;
-import jdk.internal.util.xml.impl.Input;
 import org.everit.json.schema.ValidationException;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**

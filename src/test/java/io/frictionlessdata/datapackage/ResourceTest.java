@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import io.frictionlessdata.tableschema.Schema;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
@@ -18,16 +20,34 @@ import org.junit.jupiter.api.Test;
  * 
  */
 class ResourceTest {
+
+    @Test
+    void testResourceDialectDereferencing() throws Exception {
+        String content = getFileContents("/fixtures/multi_data_datapackage.json");
+        URL schemaUrl = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/schema/population_schema.json");
+        // create a tabular data resource from remote location
+        Resource resource = Resource
+                .builder()
+                .name("population")
+                .schema(schemaUrl)
+                .data(content)
+                .path("src/test/resources/fixtures/data/population.csv")
+                .profile(Profile.PROFILE_TABULAR_DATA_RESOURCE)
+                .build();
+    }
     
     @Test
     void testIterateDataFromUrlPath() throws Exception{
        
         String urlString = "https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/data/population.csv";
         URL dataSource = new URL(urlString);
-        Resource resource = new Resource("population", dataSource);
-        
-        // Set the profile to tabular data resource.
-        resource.setProfile(Profile.PROFILE_TABULAR_DATA_RESOURCE);
+        // create a tabular data resource from remote location
+        Resource resource = Resource
+                .builder()
+                .name("population")
+                .path(dataSource)
+                .profile(Profile.PROFILE_TABULAR_DATA_RESOURCE)
+                .build();
         
         // Expected data.
         List<String[]> expectedData = this.getExpectedPopulationData();
@@ -56,11 +76,14 @@ class ResourceTest {
 
         String filePath = ResourceTest.class.getResource("/fixtures/data/population.csv").getPath();
         File file = new File(filePath);
-        Resource resource = new Resource("population", file);
-        
-        // Set the profile to tabular data resource.
-        resource.setProfile(Profile.PROFILE_TABULAR_DATA_RESOURCE);
-        
+        // create a tabular data resource from local file
+        Resource resource = Resource
+                .builder()
+                .name("population")
+                .path(file)
+                .profile(Profile.PROFILE_TABULAR_DATA_RESOURCE)
+                .build();
+
         // Expected data.
         List<String[]> expectedData = this.getExpectedPopulationData();
         
@@ -97,10 +120,13 @@ class ResourceTest {
         expectedData.add(new String[]{"rome", "41.89,12.51"});
         
         JSONArray multipartPathJsonArray = new JSONArray("[\"src/test/resources/fixtures/data/cities.csv\", \"src/test/resources/fixtures/data/cities2.csv\", \"src/test/resources/fixtures/data/cities3.csv\"]");
-        Resource resource = new Resource("coordinates", multipartPathJsonArray);
-        
-        // Set the profile to tabular data resource.
-        resource.setProfile(Profile.PROFILE_TABULAR_DATA_RESOURCE);
+        // create a tabular data resource from path array
+        Resource resource = Resource
+                .builder()
+                .name("coordinates")
+                .path(multipartPathJsonArray)
+                .profile(Profile.PROFILE_TABULAR_DATA_RESOURCE)
+                .build();
         
         Iterator<String[]> iter = resource.iter();
         int expectedDataIndex = 0;
@@ -132,10 +158,13 @@ class ResourceTest {
         expectedData.add(new String[]{"rome", "41.89,12.51"});
         
         JSONArray multipartPathJsonArray = new JSONArray("[\"https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/data/cities.csv\", \"https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/data/cities2.csv\", \"https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/data/cities3.csv\"]");
-        Resource resource = new Resource("coordinates", multipartPathJsonArray);
-        
-        // Set the profile to tabular data resource.
-        resource.setProfile(Profile.PROFILE_TABULAR_DATA_RESOURCE);
+        // create a tabular data resource from path array
+        Resource resource = Resource
+                .builder()
+                .name("coordinates")
+                .path(multipartPathJsonArray)
+                .profile(Profile.PROFILE_TABULAR_DATA_RESOURCE)
+                .build();
         
         Iterator<String[]> iter = resource.iter();
         int expectedDataIndex = 0;
@@ -165,10 +194,14 @@ class ResourceTest {
 
         // Get JSON Object
         JSONObject schemaJson = new JSONObject(schemaJsonString);
-        Resource resource = new Resource("population", file, schemaJson);
-        
-        // Set the profile to tabular data resource.
-        resource.setProfile(Profile.PROFILE_TABULAR_DATA_RESOURCE);
+        // create a tabular data resource with schema
+        Resource resource = Resource
+                .builder()
+                .name("population")
+                .path(file)
+                .schema(new Schema(schemaJson))
+                .profile(Profile.PROFILE_TABULAR_DATA_RESOURCE)
+                .build();
         
         Iterator<Object[]> iter = resource.iter(false, false, true);
         
@@ -185,11 +218,15 @@ class ResourceTest {
     @Test
     void testIterateDataFromCsvFormat() throws Exception{
         String dataString = "city,year,population\nlondon,2017,8780000\nparis,2017,2240000\nrome,2017,2860000";
-        Resource resource = new Resource("population", dataString, Resource.FORMAT_CSV);
-        
-        // Set the profile to tabular data resource.
-        resource.setProfile(Profile.PROFILE_TABULAR_DATA_RESOURCE);
-        
+        // create a tabular data resource from CSV data
+        Resource resource = Resource
+                .builder()
+                .name("population")
+                .data(dataString)
+                .format(Resource.FORMAT_CSV)
+                .profile(Profile.PROFILE_TABULAR_DATA_RESOURCE)
+                .build();
+
         // Expected data.
         List<String[]> expectedData = this.getExpectedPopulationData();
         
@@ -231,11 +268,15 @@ class ResourceTest {
               "\"population\": 2860000" +
             "}" +
         "]");
-        
-        Resource resource = new Resource("population", jsonData, Resource.FORMAT_JSON);
-        
-        // Set the profile to tabular data resource.
-        resource.setProfile(Profile.PROFILE_TABULAR_DATA_RESOURCE);
+
+        // create a tabular data resource from CSV data
+        Resource resource = Resource
+                .builder()
+                .name("population")
+                .data(jsonData)
+                .format(Resource.FORMAT_JSON)
+                .profile(Profile.PROFILE_TABULAR_DATA_RESOURCE)
+                .build();
         
         // Expected data.
         List<String[]> expectedData = this.getExpectedPopulationData();
@@ -264,12 +305,15 @@ class ResourceTest {
         // Get data file.
         String filePath = ResourceTest.class.getResource("/fixtures/data/population.csv").getPath();
         File file = new File(filePath);
+        // create a tabular data resource from CSV data file
+        Resource resource = Resource
+                .builder()
+                .name("population")
+                .path(file)
+                .format(Resource.FORMAT_CSV)
+                .profile(Profile.PROFILE_TABULAR_DATA_RESOURCE)
+                .build();
 
-        Resource resource = new Resource("population", file);
-        
-        // Set the profile to tabular data resource.
-        resource.setProfile(Profile.PROFILE_TABULAR_DATA_RESOURCE);
-        
         // Assert
         Assertions.assertEquals(3, resource.read().size());
     }
@@ -280,10 +324,14 @@ class ResourceTest {
         String filePath = ResourceTest.class.getResource("/fixtures/data/population.csv").getPath();
         File file = new File(filePath);
 
-        Resource resource = new Resource("population", file);
-        
-        // Set the profile to tabular data resource.
-        resource.setProfile(Profile.PROFILE_TABULAR_DATA_RESOURCE);
+        // create a tabular data resource from CSV data file
+        Resource resource = Resource
+                .builder()
+                .name("population")
+                .path(file)
+                .format(Resource.FORMAT_CSV)
+                .profile(Profile.PROFILE_TABULAR_DATA_RESOURCE)
+                .build();
         
         // Assert
         Assertions.assertEquals("city", resource.getHeaders()[0]);

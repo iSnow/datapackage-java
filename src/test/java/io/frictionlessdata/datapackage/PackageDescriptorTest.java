@@ -112,7 +112,7 @@ class PackageDescriptorTest {
         Path path = Paths.get(sourceFileUrl.toURI());
 
         // Get string content version of source file.
-        String jsonString = getFileContents(fName);
+        String jsonString = TestHelpers.getFileContents(fName);
    
         // Build DataPackage instance based on source file path.
         PackageDescriptor dp = new PackageDescriptor(path, true);
@@ -192,7 +192,7 @@ class PackageDescriptorTest {
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/multi_data_datapackage.json");
         PackageDescriptor dp = new PackageDescriptor(url, true);
         
-        Resource resource = new Resource("resource-name", null, // Path property is null.
+        Resource resource = new Resource("resource-name", (File)null, // Path property is null.
             (JSONObject)null, null, null, null, null, null, // Casting to JSONObject to resolve ambiguous constructor reference.
             null, null, null, null, null);
 
@@ -272,7 +272,11 @@ class PackageDescriptorTest {
         Assertions.assertEquals(5, dp.getResources().size());
         
         List<String> paths = new ArrayList<>(Arrays.asList("cities.csv", "cities2.csv"));
-        Resource resource = new Resource("new-resource", paths);
+        Resource resource = Resource
+                .builder()
+                .name("new-resource")
+                .path(paths)
+                .build();
         dp.addResource(resource);
         Assertions.assertEquals(6, dp.getResources().size());
         
@@ -284,14 +288,14 @@ class PackageDescriptorTest {
     void testAddInvalidResourceWithStrictValidation() throws Exception{
         PackageDescriptor dp = this.getDefaultTestDataPackage(true);
 
-        Exception exception = assertThrows(ValidationException.class, () -> dp.addResource(new Resource(null, null)));
+        Exception exception = assertThrows(ValidationException.class, () -> dp.addResource(new Resource()));
         Assertions.assertEquals("The resource does not have a name property.", exception.getMessage());
     }
     
     @Test
     void testAddInvalidResourceWithoutStrictValidation() throws Exception{
         PackageDescriptor dp = this.getDefaultTestDataPackage(false);
-        dp.addResource(new Resource(null, null));
+        dp.addResource(new Resource());
         
         Assertions.assertEquals(1, dp.getErrors().size());
         Assertions.assertEquals("The resource does not have a name property.", dp.getErrors().get(0).getMessage());
@@ -418,7 +422,7 @@ class PackageDescriptorTest {
         Resource resource = pkg.getResource("third-resource");
 
         // Get string content version of the schema file.
-        String schemaJsonString =getFileContents("/fixtures/schema/population_schema.json");
+        String schemaJsonString = TestHelpers.getFileContents("/fixtures/schema/population_schema.json");
         
         // Get JSON Object
         JSONObject schemaJson = new JSONObject(schemaJsonString);
@@ -433,7 +437,7 @@ class PackageDescriptorTest {
         Resource resource = pkg.getResource("fourth-resource");
 
         // Get string content version of the schema file.
-        String schemaJsonString =getFileContents("/fixtures/schema/population_schema.json");
+        String schemaJsonString = TestHelpers.getFileContents("/fixtures/schema/population_schema.json");
         
         // Get JSON Object
         JSONObject schemaJson = new JSONObject(schemaJsonString);
@@ -456,7 +460,7 @@ class PackageDescriptorTest {
         Resource resource = pkg.getResource("fifth-resource");
 
         // Get string content version of the dialect file.
-        String dialectJsonString =getFileContents("/fixtures/dialect.json");
+        String dialectJsonString = TestHelpers.getFileContents("/fixtures/dialect.json");
         
         // Get JSON Object
         JSONObject dialectJson = new JSONObject(dialectJsonString);
@@ -464,32 +468,11 @@ class PackageDescriptorTest {
         // Compare.
         Assertions.assertTrue(dialectJson.similar(resource.getDialect()));
     }
-    
-    private PackageDescriptor getDataPackageFromFilePath(String datapackageFilePath, boolean strict) throws Exception{
-        // Get string content version of source file.
-        String jsonString = getFileContents(datapackageFilePath);
-        
-        // Create DataPackage instance from jsonString
 
-        return new PackageDescriptor(jsonString, strict);
-    } 
-    
     private PackageDescriptor getDefaultTestDataPackage(boolean strict) throws Exception{
-        return getDataPackageFromFilePath("/fixtures/multi_data_datapackage.json", strict);
+        return TestHelpers.getDataPackageFromFilePath("/fixtures/multi_data_datapackage2.json", strict);
     }
 
-    private static String getFileContents(String fileName) {
-        try {
-            // Create file-URL of source file:
-            URL sourceFileUrl = PackageDescriptorTest.class.getResource(fileName);
-            // Get path of URL
-            Path path = Paths.get(sourceFileUrl.toURI());
-            return new String(Files.readAllBytes(path));
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-    
     private List<String[]> getAllCityData(){
         List<String[]> expectedData  = new ArrayList();
         expectedData.add(new String[]{"libreville", "0.41,9.29"});

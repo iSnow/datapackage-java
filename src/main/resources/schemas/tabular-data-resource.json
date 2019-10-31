@@ -97,7 +97,17 @@
       "propertyOrder": 40,
       "title": "Table Schema",
       "description": "A Table Schema for this resource, compliant with the [Table Schema](/tableschema/) specification.",
-      "type": "object",
+      "oneOf": [
+        {
+          "title": "Schema path",
+          "description": "A fully qualified URL, or a POSIX file path..",
+          "type": "string"
+        },
+        {
+          "title": "Schema encoded as JSON",
+          "type": "object"
+        }
+      ],
       "required": [
         "fields"
       ],
@@ -1782,7 +1792,17 @@
       "propertyOrder": 50,
       "title": "CSV Dialect",
       "description": "The CSV dialect descriptor.",
-      "type": "object",
+      "oneOf": [
+        {
+          "title": "Schema path",
+          "description": "A fully qualified URL, or a POSIX file path..",
+          "type": "string"
+        },
+        {
+          "title": "Schema encoded as JSON",
+          "type": "object"
+        }
+      ],
       "required": [
         "delimiter",
         "doubleQuote"

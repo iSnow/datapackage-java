@@ -2,6 +2,7 @@ package io.frictionlessdata.datapackage;
 
 import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 import io.frictionlessdata.datapackage.inputsource.InputSource;
+import io.frictionlessdata.tableschema.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.everit.json.schema.ValidationException;
@@ -338,7 +339,7 @@ public class PackageDescriptor {
                 // Get the schema and dereference it. Enables validation against it.
                 Object schemaObj = resourceJson.has(Resource.JSON_KEY_SCHEMA) ? resourceJson.get(Resource.JSON_KEY_SCHEMA) : null;
                 JSONObject dereferencedSchema = this.getDereferencedObject(schemaObj);
-
+                Schema schema = (dereferencedSchema != null)? new Schema(dereferencedSchema) : null;
                 // Now we can build the resource objects
                 Resource resource = null;
 
@@ -347,9 +348,23 @@ public class PackageDescriptor {
                     Object dialectObj = resourceJson.has(Resource.JSON_KEY_DIALECT) ? resourceJson.get(Resource.JSON_KEY_DIALECT) : null;
                     JSONObject dereferencedDialect = this.getDereferencedObject(dialectObj);
 
-                    resource = new Resource(name, path, dereferencedSchema, dereferencedDialect,
-                            profile, title, description, mediaType, encoding, bytes, hash, sources, licenses);
 
+                    resource = Resource
+                        .builder()
+                        .name(name)
+                        .path(path)
+                        .schema(schema)
+                        .dialect(dereferencedDialect)
+                        .profile(profile)
+                        .title(title)
+                        .description(description)
+                        .mediaType(mediaType)
+                        .encoding(encoding)
+                        .bytes(bytes)
+                        .hash(hash)
+                        .sources(sources)
+                        .licenses(licenses)
+                        .build();
                 }else if(data != null && format != null){
                     resource = new Resource(name, data, format, dereferencedSchema,
                             profile, title, description, mediaType, encoding, bytes, hash, sources, licenses);
