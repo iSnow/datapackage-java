@@ -72,6 +72,9 @@ public class Resource {
 
     public Resource(){}
 
+    /** Private constructor, only used for the builder
+     *  pattern.
+     */
     private Resource(
             Object path,
             Object data,
@@ -106,136 +109,11 @@ public class Resource {
         this.licenses = licenses;
     }
 
-    public Resource(String name, File path) throws Exception {
-        this(name, path, new JSONObject());
-    }
-    public Resource(String name, URL path) throws Exception {
-        this(name, path, new JSONObject());
-    }
-
-    public Resource(String name, JSONObject data) throws Exception {
-        this.name = name;
-        this.data = data;
-    }
-
-    public Resource(String name, File path, JSONObject schema) throws Exception {
-        this.name = name;
-        this.path = path;
-        if(schema.length() > 0){
-            this.schema = new Schema(schema, true);
-        }
-    }
-
-    public Resource(String name, URL path, JSONObject schema) throws Exception {
-        this.name = name;
-        this.path = path;
-        if(schema.length() > 0){
-            this.schema = new Schema(schema.toString(), true);
-        }
-    }
-
-    public Resource(String name, JSONArray paths) throws Exception {
-        this.name = name;
-        this.path = paths;
-    }
-
     public Resource(String name, List paths) throws Exception {
         this.name = name;
         this.path = paths;
     }
 
-    public Resource(String name, Object data, String format) throws Exception {
-        this(name, data, format, null);
-    }
-
-    public Resource(String name, Object data, String format, JSONObject schema) throws Exception {
-        this.name = name;
-        this.data = data;
-        this.format = format;
-        if (schema != null)
-            this.schema = new Schema(schema.toString(), true);
-    }
-
-    public Resource(String name, File path, JSONObject schema, JSONObject dialect, String profile, String title,
-            String description, String mediaType,
-            String encoding, Integer bytes, String hash, JSONArray sources, JSONArray licenses) throws Exception {
-
-        this.name = name;
-        this.path = path;
-        if (schema != null)
-            this.schema = new Schema(schema, true);
-        this.dialect = dialect;
-        this.profile = profile;
-        this.title = title;
-        this.description = description;
-        this.mediaType = mediaType;
-        this.encoding = encoding;
-        this.bytes = bytes;
-        this.hash = hash;
-        this.sources = sources;
-        this.licenses = licenses;
-    }
-
-    public Resource(String name, Object path, JSONObject schema, JSONObject dialect, String profile, String title,
-                    String description, String mediaType,
-                    String encoding, Integer bytes, String hash, JSONArray sources, JSONArray licenses) throws Exception {
-
-        this.name = name;
-        this.path = path;
-        if (schema != null)
-            this.schema = new Schema(schema, true);
-        this.dialect = dialect;
-        this.profile = profile;
-        this.title = title;
-        this.description = description;
-        this.mediaType = mediaType;
-        this.encoding = encoding;
-        this.bytes = bytes;
-        this.hash = hash;
-        this.sources = sources;
-        this.licenses = licenses;
-    }
-
-    public Resource(String name, String data, JSONObject schema, JSONObject dialect, String profile, String title,
-                    String description, String mediaType,
-                    String encoding, Integer bytes, String hash, JSONArray sources, JSONArray licenses) throws Exception {
-
-        this.name = name;
-        this.data = data;
-        if (schema != null)
-            this.schema = new Schema(schema, true);
-        this.dialect = dialect;
-        this.profile = profile;
-        this.title = title;
-        this.description = description;
-        this.mediaType = mediaType;
-        this.encoding = encoding;
-        this.bytes = bytes;
-        this.hash = hash;
-        this.sources = sources;
-        this.licenses = licenses;
-
-    }
-
-    public Resource(String name, Object data, String format, JSONObject schema, String profile,
-            String title, String description, String mediaType,
-            String encoding, Integer bytes, String hash, JSONArray sources, JSONArray licenses) throws Exception {
-        
-        this.name = name;
-        this.data = data;
-        this.format = format;
-        if (schema != null)
-            this.schema = new Schema(schema, true);
-        this.profile = profile;
-        this.title = title;
-        this.description = description;
-        this.mediaType = mediaType;
-        this.encoding = encoding;
-        this.bytes = bytes;
-        this.hash = hash;
-        this.sources = sources;
-        this.licenses = licenses;
-    }
 
     public static ResourceBuilder builder() {
         return new ResourceBuilder();

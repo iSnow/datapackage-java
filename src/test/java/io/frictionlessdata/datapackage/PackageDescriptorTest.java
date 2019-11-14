@@ -191,10 +191,9 @@ class PackageDescriptorTest {
     void testCreatingResourceWithInvalidPathNullValue() throws Exception{
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/multi_data_datapackage.json");
         PackageDescriptor dp = new PackageDescriptor(url, true);
-        
-        Resource resource = new Resource("resource-name", (File)null, // Path property is null.
-            (JSONObject)null, null, null, null, null, null, // Casting to JSONObject to resolve ambiguous constructor reference.
-            null, null, null, null, null);
+
+        // Resource is invalid: Path property is null.
+        Resource resource = Resource.builder().name("resource-name").build();
 
         Exception exception = assertThrows(ValidationException.class, () -> dp.addResource(resource));
         Assertions.assertEquals("Invalid Resource. The path property or the data and format properties cannot be null.", exception.getMessage());
@@ -204,10 +203,13 @@ class PackageDescriptorTest {
     void testCreatingResourceWithInvalidFormatNullValue() throws Exception{
         URL url = new URL("https://raw.githubusercontent.com/frictionlessdata/datapackage-java/master/src/test/resources/fixtures/multi_data_datapackage.json");
         PackageDescriptor dp = new PackageDescriptor(url, true);
-        
+
         // format property is null but data is not null.
-        Resource resource = new Resource("resource-name", "data.csv", (String)null, // Format is null when it shouldn't. Casting to String to resolve ambiguous constructor reference.
-                null, null, null, null, null, null, null, null, null, null);
+        Resource resource = Resource
+                .builder()
+                .name("resource-name")
+                .data("data.csv")
+                .build();
 
         Exception exception = assertThrows(ValidationException.class, () -> dp.addResource(resource));
         Assertions.assertEquals("Invalid Resource. The path property or the data and format properties cannot be null.", exception.getMessage());
@@ -219,8 +221,11 @@ class PackageDescriptorTest {
         PackageDescriptor dp = new PackageDescriptor(url, true);
         
         // data property is null but format is not null.
-        Resource resource = new Resource("resource-name", null, "csv", // data is null when it shouldn't
-                null, null, null, null, null, null, null, null, null, null);
+        Resource resource = Resource
+                .builder()
+                .name("resource-name")
+                .format("csv")
+                .build();
 
         Exception exception = assertThrows(ValidationException.class, () -> dp.addResource(resource));
         Assertions.assertEquals("Invalid Resource. The path property or the data and format properties cannot be null.", exception.getMessage());

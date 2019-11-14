@@ -41,6 +41,11 @@ public class PackageDescriptor {
     public PackageDescriptor(){
     }
 
+    public PackageDescriptor(boolean strict){
+        this.strictValidation = strict;
+    }
+
+
     /**
      * Load from InputStream.
      * @param inSource InputStream to read `datapackage.json` content from
@@ -339,17 +344,12 @@ public class PackageDescriptor {
                 // Get the schema and dereference it. Enables validation against it.
                 Object schemaObj = resourceJson.has(Resource.JSON_KEY_SCHEMA) ? resourceJson.get(Resource.JSON_KEY_SCHEMA) : null;
                 JSONObject dereferencedSchema = this.getDereferencedObject(schemaObj);
-                Schema schema = (dereferencedSchema != null)? new Schema(dereferencedSchema) : null;
-                // Now we can build the resource objects
-                Resource resource = null;
+                Schema schema = (dereferencedSchema != null)? new Schema(dereferencedSchema.toString(), false) : null;
+                // Get the dialect and dereference it. Enables validation against it.
+                Object dialectObj = resourceJson.has(Resource.JSON_KEY_DIALECT) ? resourceJson.get(Resource.JSON_KEY_DIALECT) : null;
+                JSONObject dereferencedDialect = this.getDereferencedObject(dialectObj);
 
-                if(path != null){
-                    // Get the dialect and dereference it. Enables validation against it.
-                    Object dialectObj = resourceJson.has(Resource.JSON_KEY_DIALECT) ? resourceJson.get(Resource.JSON_KEY_DIALECT) : null;
-                    JSONObject dereferencedDialect = this.getDereferencedObject(dialectObj);
-
-
-                    resource = Resource
+                Resource.ResourceBuilder rb = Resource
                         .builder()
                         .name(name)
                         .path(path)
@@ -363,13 +363,16 @@ public class PackageDescriptor {
                         .bytes(bytes)
                         .hash(hash)
                         .sources(sources)
-                        .licenses(licenses)
-                        .build();
-                }else if(data != null && format != null){
-                    resource = new Resource(name, data, format, dereferencedSchema,
-                            profile, title, description, mediaType, encoding, bytes, hash, sources, licenses);
+                        .licenses(licenses);
 
-                }else{
+                if (path != null){
+                    rb
+                      .path(path);
+                } else if(data != null && format != null){
+                    rb
+                      .data(data)
+                      .format(format);
+                } else {
                     DataPackageException dpe = new DataPackageException("Invalid Resource. The path property or the data and format properties cannot be null.");
 
                     if(this.strictValidation){
@@ -382,6 +385,8 @@ public class PackageDescriptor {
                         this.errors.add(dpe);
                     }
                 }
+                // Now we can build the resource object
+                Resource resource = rb.build();
 
                 if(resource != null){
                     this.resources.add(resource);
